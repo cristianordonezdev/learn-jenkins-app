@@ -26,6 +26,12 @@ pipeline {
         }
 
         stage('Test') {
+            gent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
             steps {
                 echo 'Test stage'
                 sh '''
