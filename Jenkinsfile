@@ -4,28 +4,28 @@ pipeline {
     stages {
 
         // this is a comment
-        // stage('Build') {
-        //     agent {
-        //         docker {
-        //             image 'node:18-alpine'
-        //             reuseNode true
-        //         }
-        //     }
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
 
-        //     steps {
-        //         echo 'Build this app ...'
-        //         sh '''
-        //             node --version
-        //             npm --version
+            steps {
+                echo 'Build this app ...'
+                sh '''
+                    node --version
+                    npm --version
 
-        //             ls -la
-        //             npm ci
-        //             npm run build
+                    ls -la
+                    npm ci
+                    npm run build
 
-        //             ls -la
-        //         '''
-        //     }
-        // }
+                    ls -la
+                '''
+            }
+        }
 
         stage('Tests') {
             parallel {
@@ -62,6 +62,23 @@ pipeline {
                         '''
                     }
                 }
+            }
+        }
+
+        stage('Deploy') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+
+            steps {
+                echo 'Build this app ...'
+                sh '''
+                  npm install netlify-cli -g
+                  netlify --version
+                '''
             }
         }
     }
