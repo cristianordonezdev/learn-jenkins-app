@@ -89,6 +89,25 @@ pipeline {
                 '''
             }
         }
+
+        stage('Production E2E') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = 'https://regal-tulumba-cc1984.netlify.app/'
+            }
+            steps {
+                sh '''
+                    echo "Production E2E"
+                    npx playwright test
+                
+                '''
+            }
+        }
     }
 
     post {
