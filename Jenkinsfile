@@ -13,7 +13,7 @@ pipeline {
 
         stage('Docker') {
             steps {
-                sh 'docker build -t my-playwright .'
+                sh 'docker build -t my-docker-image .'
             }
         }
 
@@ -81,7 +81,7 @@ pipeline {
          stage('Staging deploy with E2E') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    image 'my-docker-image'
                     reuseNode true
                 }
             }
@@ -90,12 +90,11 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install netlify-cli node-jq
-                    node_modules/.bin/netlify --version
+                    netlify --version
                     echo "Deploying to temporal sandbox. Site ID: $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --json > deploy-output.txt
-                    CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.txt)
+                    netlify status
+                    netlify deploy --dir=build --json > deploy-output.txt
+                    CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy-output.txt)
                     echo "Staging E2E to this URL: ${URL_STAGING}"
                     npx playwright test
                 '''
@@ -106,7 +105,7 @@ pipeline {
         stage('Deploy production with E2E') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    image 'my-docker-image'
                     reuseNode true
                 }
             }
@@ -117,11 +116,10 @@ pipeline {
                 sh '''
                     echo "Production E2E"
                     node --version
-                    npm install netlify-cli
-                    node_modules/.bin/netlify --version
+                    netlify --version
                     echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --prod
+                    netlify status
+                    netlify deploy --dir=build --prod
                     sleep 5
                     npx playwright test
                 '''
