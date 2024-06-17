@@ -101,11 +101,11 @@ pipeline {
                 }
             }
             environment {
-                CI_ENVIRONMENT_URL = "${env.URL_STAGING}"
+                CI_ENVIRONMENT_URL = "${URL_STAGING}"
             }
             steps {
                 sh '''
-                    echo "Staging E2E to this URL: ${env.URL_STAGING}"
+                    echo "Staging E2E to this URL: ${URL_STAGING}"
                     npx playwright test
                 '''
             }
