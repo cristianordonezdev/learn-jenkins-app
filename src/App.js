@@ -16,7 +16,7 @@ function App() {
         </a>
       </header>
       <p style={{ background: 'blue' }}>
-          Application version: 1
+          Application version: { process.env.REACT_APP_VERSION }
       </p>
     </div>
   );
