@@ -11,12 +11,6 @@ pipeline {
 
         // this is a comment
 
-        stage('Docker') {
-            steps {
-                sh 'docker build -t my-docker-image .'
-            }
-        }
-
         stage('Build') {
             agent {
                 docker {
