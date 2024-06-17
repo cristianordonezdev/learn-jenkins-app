@@ -86,7 +86,27 @@ pipeline {
                   echo "Deploying to temporal sandbox. Site ID: $NETLIFY_SITE_ID"
                   node_modules/.bin/netlify status
                   node_modules/.bin/netlify deploy --dir=build --json > deploy-output.txt
-                  node_modules/.bin/node-jq -r '.deploy_url' deploy-output.txt
+                '''
+                script: {
+                    env.URL_STAGING = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.txt", returnStdout: true)
+                }
+            }
+        }
+
+         stage('Staging E2E') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = "${env.URL_STAGING}"
+            }
+            steps {
+                sh '''
+                    echo "Staging E2E to this URL: ${env.URL_STAGING}"
+                    npx playwright test
                 '''
             }
         }
