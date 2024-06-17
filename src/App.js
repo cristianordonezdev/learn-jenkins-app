@@ -15,7 +15,7 @@ function App() {
           Learn Jenkins on Udemy
         </a>
       </header>
-      <p style={{ background: 'blue' }}>
+      <p style={{ background: 'yellow' }}>
           Application version: { process.env.REACT_APP_VERSION }
       </p>
     </div>
